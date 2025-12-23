@@ -7,6 +7,8 @@ const courseSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    description: String,
+    video_name: String,
     price: {
         type: Number, 
         required: true
