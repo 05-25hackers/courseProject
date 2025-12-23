@@ -4,7 +4,7 @@ require(process.env.SECRET_KEY)
 
 const courseSchema = mongoose.Schema({
     name: {
-        type: String, 
+        type: String,
         required: true
     },
     price: {
