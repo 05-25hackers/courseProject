@@ -18,8 +18,7 @@ const userSchema = new mongoose.Schema({
 
   courses: [{ type: mongoose.Types.ObjectId, ref: "Course" }],
 });
-let User = mongoose.model("User", userSchema)
 
 module.exports = {
-  User
+  User: mongoose.model("users", userSchema),
 };
