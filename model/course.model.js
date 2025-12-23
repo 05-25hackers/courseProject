@@ -11,4 +11,4 @@ const courseSchema = new mongoose.Schema({
 
 module.exports = {
   Course: mongoose.model("Course", courseSchema),
-};
+}

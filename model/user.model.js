@@ -16,9 +16,10 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
 
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  courses: [{ type: mongoose.Types.ObjectId, ref: "Course" }],
 });
+let User = mongoose.model("User", userSchema)
 
 module.exports = {
-  User: mongoose.model("User", userSchema),
+  User
 };
