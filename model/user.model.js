@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
 
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  courses: [{ type: mongoose.Types.ObjectId, ref: "Course" }],
 });
 
 module.exports = {
