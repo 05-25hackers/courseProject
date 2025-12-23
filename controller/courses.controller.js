@@ -1,89 +1,76 @@
-const { Course } = require("../models/courses.model.js");
-const { User } = require("../models/users.model.js");
+const { User } = require('../model/users.model.js')
+const { Course } = require('../model/course.model.js')
 
 const GET_COURSES = async (req, res) => {
-  const data = await Course.find().populate("author");
+	const data = await User.find()
+	if (!data)
+		return res.json({
+			message: 'Error',
+		})
 
-  res.json({
-    message: "Success",
-    data: data,
-  });
-};
+	return res.json({
+		message: 'Success',
+		data,
+	})
+}
 
 const CREATE_COURSE = async (req, res) => {
-  const { role, _id } = req.user;
-  const { title } = req.body;
+	if (role === '/admin') {
+		let reqBody = req.body.body
+		reqBody = JSON.parse(reqBody)
 
-  if (role !== "teacher" && role !== "admin") {
-    return res.json({
-      message: "Sizga mumkin emas",
-    });
-  }
-
-  const newCourse = await Course.create({
-    title,
-    author: _id,
-  });
-
-  await User.findByIdAndUpdate(_id, { $push: { courses: newCourse._id } });
-
-  res.json({
-    message: "Qoshildi",
-    data: newCourse,
-  });
-};
-
-const DELETE_COURSE = async (req, res) => {
-  const { role, _id } = req.user;
-  const { id } = req.params;
-
-  const course = await Course.findById(id);
-
-  if (!course) {
-    return res.json({ message: "Kurs topilmadi" });
-  }
-
-  if (role === "admin") {
-    await Course.findByIdAndDelete(id);
-    return res.json({ message: "Ochirildi (Admin)" });
-  }
-
-  if (role === "teacher") {
-    if (course.author.toString() === _id.toString()) {
-      await Course.findByIdAndDelete(id);
-      return res.json({ message: "Ochirildi (Teacher)" });
-    } else {
-      return res.json({ message: "Bu sizning kursingiz emas" });
-    }
-  }
-
-  res.json({
-    message: "Sizga mumkin emas",
-  });
-};
+		const { name, description, video_name, price, user, category } = reqBody
+		const userId = req.user._id
+		const newData = await Course.create({
+			name,
+			description,
+			video_name,
+			price,
+			category,
+			user: user,
+			user: userId,
+		})
+		await User.findByIdAndUpdate(
+			{ _id: userId },
+			{ $push: { course: newData } },
+		)
+		return res.json({
+			message: 'Success',
+			data: newData,
+		})
+	}
+}
 
 const UPDATE_COURSE = async (req, res) => {
-  const { role } = req.user;
-  const { id } = req.params;
-  const { title } = req.body;
+	if (role === '/admin') {
+		const { id } = req.params
+		const { name, video_name, price, category } = req.body
+		const data = await Post.findByIdAndUpdate(
+			id,
+			{ name, video_name, price, category },
+			{ new: true },
+		)
+		res.json({
+			message: 'Yangilandi',
+			data: data,
+		})
+	}
+}
 
-  if (role !== "admin") {
-    return res.json({
-      message: "Faqat admin ozgartira oladi",
-    });
-  }
-
-  const updated = await Course.findByIdAndUpdate(id, { title }, { new: true });
-
-  res.json({
-    message: "Yangilandi",
-    data: updated,
-  });
-};
+const DELETE_COURSE = async (req, res) => {
+	if (role === '/admin') {
+		const { id } = req.params
+		await Course.findByIdAndDelete(id)
+		await User.findByIdAndUpdate(req.user._id, { $pull: { posts: id } })
+		res.json({
+			message: "O'chirildi",
+		})
+	}
+}
 
 module.exports = {
-  GET_COURSES,
-  CREATE_COURSE,
-  DELETE_COURSE,
-  UPDATE_COURSE,
-};
+	GET_COURSES,
+	CREATE_COURSE,
+	UPDATE_COURSE,
+	DELETE_COURSE,
+}

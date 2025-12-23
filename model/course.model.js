@@ -4,7 +4,7 @@ require(process.env.SECRET_KEY)
 
 const courseSchema = mongoose.Schema({
     name: {
-        type: String, 
+        type: String,
         required: true
     },
     description: String,
@@ -23,6 +23,9 @@ const courseSchema = mongoose.Schema({
     }
 })
 
+module.exports = {
+  Course: mongoose.model("Course", courseSchema),
+}
 const Course = mongoose.model("course", courseSchema)
 
 module.exports = { Course }
