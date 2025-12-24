@@ -30,10 +30,9 @@ const checkToken = async (req, res, next) => {
     next();
   } catch (error) {
     return res.json({
-      message: "Token xato",
+      message: "Token xatosi",
     });
   }
 };
 
 module.exports = { checkToken };
-
