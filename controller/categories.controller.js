@@ -14,7 +14,7 @@ const CREATE_CATEGORY = async (req, res) => {
   const { title } = req.body;
 
   if (role !== "admin") {
-    return res.json({ message: "Faqat admin qosha oladi" });
+    return res.json({ message: "faqat adminjon qosha oladi" });
   }
 
   const newCategory = await Category.create({ title });
@@ -31,7 +31,7 @@ const UPDATE_CATEGORY = async (req, res) => {
   const { title } = req.body;
 
   if (role !== "admin") {
-    return res.json({ message: "Faqat admin ozgartira oladi" });
+    return res.json({ message: "faqat adminjon ozgartira oladi" });
   }
 
   const updated = await Category.findByIdAndUpdate(
@@ -47,7 +47,7 @@ const DELETE_CATEGORY = async (req, res) => {
   const { id } = req.params;
 
   if (role !== "admin") {
-    return res.json({ message: "Faqat admin ochira oladi" });
+    return res.json({ message: "faqat adminjon ochira oladi" });
   }
 
   await Category.findByIdAndDelete(id);

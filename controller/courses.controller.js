@@ -41,7 +41,7 @@ const DELETE_COURSE = async (req, res) => {
   const course = await Course.findById(id);
 
   if (!course) {
-    return res.json({ message: "Kurs topilmadi" });
+    return res.json({ message: "kurs topilmadi" });
   }
 
   if (role === "admin") {
