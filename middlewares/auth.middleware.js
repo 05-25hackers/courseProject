@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/users.model.js");
+const { User } = require("../model/user.model.js");
+require("dotenv").config()
 
 const checkToken = async (req, res, next) => {
   try {
@@ -13,9 +14,10 @@ const checkToken = async (req, res, next) => {
 
     const token = header.split(" ")[1];
 
-    const decoded = jwt.verify(token, "secret");
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-    const userId = decoded.id;
+    const userId = decoded._id;
+    console.log(userId)
     const user = await User.findById(userId);
 
     if (!user) {
@@ -30,10 +32,9 @@ const checkToken = async (req, res, next) => {
     next();
   } catch (error) {
     return res.json({
-      message: "Token xato",
+      message: error.message,
     });
   }
 };
 
 module.exports = { checkToken };
-

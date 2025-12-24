@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-require(process.env.SECRET_KEY)
 
 const courseSchema = mongoose.Schema({
     name: {

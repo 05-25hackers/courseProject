@@ -2,10 +2,10 @@ const { User } = require('../model/user.model.js')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 require('dotenv').config()
-require(process.env.SECRET_KEY)
+const SECRET_KEY = process.env.SECRET_KEY
 const REGISTER = async (req, res) => {
 	const { name, courses, age, phone, password, role } = req.body
-	if (!(name && age && phone && password && role && courses))
+	if (!(name && age && phone && password))
 		return res.json({
 			message: 'Malumot kiritish shart',
 		})

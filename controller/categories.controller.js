@@ -1,75 +1,62 @@
-
-const { Category } = require("../models/categories.model.js");
-
-
+const { Category } = require('../model/categories.model.js')
 
 const GET_CATEGORIES = async (req, res) => {
-  const data = await Category.find();
+	const data = await Category.find().populate('courses').exec()
 
-    res.json({
-
-        message: "Success",
-
-        data: data,
-
-    });
-
-};
-
-
+	res.json({
+		message: 'Success',
+		data: data,
+	})
+}
 
 const CREATE_CATEGORY = async (req, res) => {
+	const { role } = req.user
+	const { title } = req.body
 
-    const { role } = req.user;
+	if (role !== 'admin') {
+		return res.json({ message: 'faqat adminjon qosha oladi' })
+	}
 
-    const { title } = req.body;
+	const newCategory = await Category.create({ title })
 
-  if (role !== "admin") {
-    return res.json({ message: "faqat adminjon qosha oladi" });
-  }
-
-  const newCategory = await Category.create({ title });
-  res.json({ message: "Qoshildi", data: newCategory });
-
-};
+	res.json({
+		message: 'Qoshildi',
+		data: newCategory,
+	})
+}
 
 const UPDATE_CATEGORY = async (req, res) => {
-  const { role } = req.user;
-  const { id } = req.params;
-  const { title } = req.body;
+	const { role } = req.user
+	const { id } = req.params
+	const { title } = req.body
 
-  if (role !== "admin") {
+	if (role !== 'admin') {
+		return res.json({ message: 'faqat adminjon ozgartira oladi' })
+	}
 
-      return res.json({ message: "faqat adminjon ozgartira oladi" });
-
-  }
-
-    
-  const updated = await Category.findByIdAndUpdate(
-    id,
-    { title },
-    { new: true }
-  );
-  res.json({ message: "Yangilandi", data: updated });
-};
+	const updated = await Category.findByIdAndUpdate(
+		id,
+		{ title },
+		{ new: true },
+	)
+	res.json({ message: 'Yangilandi', data: updated })
+}
 
 const DELETE_CATEGORY = async (req, res) => {
+	const { role } = req.user
+	const { id } = req.params
 
-  const { role } = req.user;
-  const { id } = req.params;
+	if (role !== 'admin') {
+		return res.json({ message: 'faqat adminjon ochira oladi' })
+	}
 
-    if (role !== "admin") {
-      
-    return res.json({ message: "faqat adminjon ochira oladi" });
-  }
-
-  await Category.findByIdAndDelete(id);
-  res.json({ message: "ochirildi" });
-};
+	await Category.findByIdAndDelete(id)
+	res.json({ message: 'ochirildi' })
+}
 
 module.exports = {
-  GET_CATEGORIES,
-  CREATE_CATEGORY,
-  UPDATE_CATEGORY,
-  DELETE_CATEGORY,
-};
+	GET_CATEGORIES,
+	CREATE_CATEGORY,
+	UPDATE_CATEGORY,
+	DELETE_CATEGORY,
+}
