@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 require('dotenv').config()
 require(process.env.SECRET_KEY)
+
 const REGISTER = async (req, res) => {
 	const { name, courses, age, phone, password, role } = req.body
 	if (!(name && age && phone && password && role && courses))
@@ -18,7 +19,7 @@ const REGISTER = async (req, res) => {
 		courses,
 		password: await bcrypt.hash(password, 12),
 	})
-	res.json({
+	return res.json({
 		message: 'Successfully registered',
 		newUser,
 	})

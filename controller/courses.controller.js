@@ -2,7 +2,7 @@ const { User } = require('../model/users.model.js')
 const { Course } = require('../model/course.model.js')
 
 const GET_COURSES = async (req, res) => {
-	const data = await User.find()
+  const data = await Course.find().populate("author").populate("category");
 	if (!data)
 		return res.json({
 			message: 'Error',
@@ -15,7 +15,8 @@ const GET_COURSES = async (req, res) => {
 }
 
 const CREATE_COURSE = async (req, res) => {
-	if (role === '/admin') {
+  const { role } = req.user;
+	if (role !== '/admin') {
 		let reqBody = req.body.body
 		reqBody = JSON.parse(reqBody)
 
@@ -41,32 +42,66 @@ const CREATE_COURSE = async (req, res) => {
 	}
 }
 
-const UPDATE_COURSE = async (req, res) => {
-	if (role === '/admin') {
-		const { id } = req.params
-		const { name, video_name, price, category } = req.body
-		const data = await Post.findByIdAndUpdate(
-			id,
-			{ name, video_name, price, category },
-			{ new: true },
-		)
-		res.json({
-			message: 'Yangilandi',
-			data: data,
-		})
-	}
-}
 
 const DELETE_COURSE = async (req, res) => {
-	if (role === '/admin') {
-		const { id } = req.params
-		await Course.findByIdAndDelete(id)
-		await User.findByIdAndUpdate(req.user._id, { $pull: { posts: id } })
-		res.json({
-			message: "O'chirildi",
-		})
-	}
-}
+  const { role, _id } = req.user;
+  const { id } = req.params.id;
+
+  const course = await Course.findById(id);
+
+  if (!course) {
+    return res.json({ message: "kurs topilmadi" });
+  }
+
+  if (role === "admin") {
+    await Course.findByIdAndDelete(id);
+    return res.json({ message: "Ochirildi" });
+  }
+
+  if (role === "teacher" && course.author == _id) {
+    await Course.findByIdAndDelete(id);
+    return res.json({ message: "Ochirildi" });
+  }
+
+  return res.json({
+    message: "Sizga mumkin emas",
+  });
+};
+
+const UPDATE_COURSE = async (req, res) => {
+  const { role } = req.user;
+
+  
+  const { id } = req.params;
+  
+  const { title, category } = req.body;
+
+  const course = await Course.findById(id);
+
+  if (!course) {
+    return res.json({ message: "Kurs topilmadi" });
+  }
+
+  if (role === "admin") {
+    const updated = await Course.findByIdAndUpdate(
+      id,
+      { title, category },
+      { new: true }
+    );
+    return res.json({ message: "Yangilandi", data: updated });
+  }
+
+  if (role === "teacher" && course.author == _id) {
+    const updated = await Course.findByIdAndUpdate(
+      id,
+      { title, category },
+      { new: true }
+    );
+    return res.json({ message: "yangilandi", data: updated });
+  }
+
+  res.json({ message: "Sizga mumkin emassssss" });
+};
 
 module.exports = {
 	GET_COURSES,
