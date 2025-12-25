@@ -1,7 +1,7 @@
 const express = require("express");
 const { database } = require("./config/database.js");
 const authRoute = require("./routes/auth.route.js");
-const courseRoute = require("./routes/courses.routes.js");
+const courseRoute = require("./routes/course.route.js");
 const userRoute = require("./routes/users.route.js");
 const categoryRoute = require("./routes/categories.route.js");
 

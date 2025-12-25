@@ -1,8 +1,10 @@
+require('dotenv').config()
 const { User } = require('../model/user.model.js')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-require('dotenv').config()
-require(process.env.SECRET_KEY)
+
+const SECRET_KEY = process.env.SECRET_KEY
+
 
 const REGISTER = async (req, res) => {
 	const { name, courses, age, phone, password, role } = req.body
@@ -29,7 +31,7 @@ const LOGIN = async (req, res) => {
 	const { phone, password } = req.body
 	let foundUser = await User.findOne({ phone })
 	if (!foundUser) return res.json({ message: 'User not found' })
-	const isCorrectPassword = bcrypt.compare(password, foundUser.password)
+	const isCorrectPassword = await bcrypt.compare(password, foundUser.password)
 	if (!isCorrectPassword)
 		return res.json({
 			message: 'Wrong password',
